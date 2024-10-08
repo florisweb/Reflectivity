@@ -13,7 +13,7 @@ export default class LightRay {
 		this.wavelength = wavelength;
 	}
 
-	computeSections(_materials, _preRefractiveIndex = 1.0) {
+	computeSections(_materials, _prevMaterial) {
 		let intersections = this.#getPrimaryIntersections(_materials);
 		intersections = intersections.filter(int => int.t1 > 0.0001);
 		intersections.sort((a, b) => a.t1 > b.t1);
@@ -23,24 +23,25 @@ export default class LightRay {
 		if (intersections.length)
 		{
 			sections.push(intersections[0].position);
-			let curRefIndex = intersections[0].material.refractiveIndex;
+			
+			let curMaterial = intersections[0].material;
+			let prevRefIndex = _prevMaterial ? _prevMaterial.refractiveIndex : 1.0;
+			let curRefIndex = _prevMaterial !== curMaterial ? curMaterial.refractiveIndex : 1.0;
+			
 			let normalAngle = intersections[0].normal.angle;
 			let inAngle = this.direction.angle - Math.PI;
 			let dAngleIn = Math.abs(normalAngle - inAngle);
-			while (dAngleIn > .5 * Math.PI) dAngleIn -= .5 * Math.PI;
-			
-			let dAngleOut = Math.asin(Math.sin(dAngleIn) * _preRefractiveIndex / curRefIndex);
-
+			// while (dAngleIn > .5 * Math.PI) dAngleIn -= .5 * Math.PI;
+			let dAngleOut = Math.asin(Math.sin(dAngleIn) * prevRefIndex / curRefIndex);
+			console.log(dAngleIn / Math.PI * 180, dAngleOut / Math.PI * 180)
 			let outAngle = normalAngle + Math.PI - dAngleOut;
-			console.log(dAngleIn / Math.PI * 180, normalAngle / Math.PI * 180, dAngleOut/Math.PI * 180)
-
 
 			let newRay = new LightRay({
 				position: intersections[0].position, 
 				direction: new Vector(1, 1).setAngle(outAngle)
 			});
 
-			let newSections = newRay.computeSections(_materials, curRefIndex);
+			let newSections = newRay.computeSections(_materials, intersections[0].material);
 			sections = sections.concat(newSections);
 
 
