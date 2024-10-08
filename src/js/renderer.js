@@ -22,7 +22,7 @@ export default class Renderer {
 
 		for (let lightRay of App.lightRays)
 		{
-			this.#drawLine(lightRay.position, lightRay.direction.copy().scale(50), '#f00');
+			this.#renderLightRay(lightRay);
 		}
 	}
 
@@ -43,6 +43,27 @@ export default class Renderer {
 		this.ctx.closePath();
 		this.ctx.stroke();
 		this.ctx.fill();
+	}
+
+	#renderLightRay(_ray) {
+		let sections = _ray.computeSections(App.materials);
+
+		let startPos = this.camera.worldToPxCoord(sections[0]);
+		this.ctx.strokeStyle = '#333';
+
+		this.ctx.beginPath()
+		this.ctx.moveTo(startPos.value[0], startPos.value[1]);
+		for (let i = 1; i < sections.length; i++)
+		{
+			let pos = this.camera.worldToPxCoord(sections[i]);
+			this.ctx.lineTo(pos.value[0], pos.value[1]);
+		}
+		this.ctx.stroke();
+
+		for (let i = 0; i < sections.length; i++)
+		{
+			this.#drawLine(sections[i], new Vector(.1, 0).add(sections[i]), '#f00');
+		}
 	}
 
 	drawLine() {

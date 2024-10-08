@@ -17,6 +17,16 @@ export default class Vector {
 	get length() {
 		return Math.sqrt(this.dotProduct(this));
 	}
+	get perpendicular() {
+		return new Vector(
+			this.value[1],
+			-this.value[0]
+		);
+	}
+
+	get angle() { // check
+		return Math.atan2(this.value[1], this.value[0]);
+	}
 
 	constructor(x, y) {
 		this.value = [x, y];
@@ -44,12 +54,7 @@ export default class Vector {
 		);
 	}
 
-	getPerpendicular() {
-		return new Vector(
-			this.value[1],
-			-this.value[0]
-		);
-	}
+	
 
 	scale(_scalar) {
 		this.value[0] *= _scalar;
@@ -65,7 +70,7 @@ export default class Vector {
 
 
 	rotate(_angle) {
-		this.setAngle(this.getAngle() + _angle, this.length);
+		this.setAngle(this.angle + _angle, this.length);
 		return this;
 	}
 
@@ -81,9 +86,7 @@ export default class Vector {
 	}
 
 
-	getAngle() { // check
-		return Math.atan2(this.value[1], this.value[0]);
-	}
+	
 	
 	setAngle(_angle, _radius = 1) {
 		_angle = .5 * Math.PI - _angle;
@@ -94,8 +97,8 @@ export default class Vector {
 	}
 
 	getProjection(_projectionVector) {
-		let dAngle = _projectionVector.getAngle() - this.getAngle();
+		let dAngle = _projectionVector.angle - this.angle;
 		let length = _projectionVector.length * Math.cos(dAngle);
-		return new Vector(0, 0).setAngle(this.getAngle(), length);
+		return new Vector(0, 0).setAngle(this.angle, length);
 	}	
 }

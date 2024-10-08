@@ -13,20 +13,20 @@ const App = new class {
 	constructor() {
 		window.App = this;
 
-		this.materials.push(new Material({
-			refractiveIndex: 1.5,
-			position: new Vector(5, 10),
-			shape: new BoxShape({width: 10, height: 1})
-		}));
 		// this.materials.push(new Material({
-		// 	refractiveIndex: 2,
-		// 	position: new Vector(5, 10 + 1),
+		// 	refractiveIndex: .5,
+		// 	position: new Vector(5, 10),
 		// 	shape: new BoxShape({width: 10, height: 1})
 		// }));
+		this.materials.push(new Material({
+			refractiveIndex: 2,
+			position: new Vector(5, 10 + 1),
+			shape: new BoxShape({width: 10, height: 1})
+		}));
 		
 		this.lightRays.push(new LightRay({
-			position: new Vector(0, 0),
-			direction: new Vector(1, 1)
+			position: new Vector(5, 5),
+			direction: new Vector(.4, 1)
 		}));
 
 		this.render();
