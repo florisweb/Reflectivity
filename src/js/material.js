@@ -1,7 +1,7 @@
 import Vector from './vector.js';
 
 
-export default class Object {
+export default class Material {
 	shape;
 	refractiveIndex = 1;
 

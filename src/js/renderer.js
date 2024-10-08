@@ -19,6 +19,11 @@ export default class Renderer {
 		{
 			this.#renderMaterial(material);
 		}
+
+		for (let lightRay of App.lightRays)
+		{
+			this.#drawLine(lightRay.position, lightRay.direction.copy().scale(50), '#f00');
+		}
 	}
 
 
@@ -40,7 +45,9 @@ export default class Renderer {
 		this.ctx.fill();
 	}
 
-
+	drawLine() {
+		return this.#drawLine(...arguments);
+	}
 	#drawLine(_posA, _posB, _color) {
 		let posA = this.camera.worldToPxCoord(_posA);
 		let posB = this.camera.worldToPxCoord(_posB);
