@@ -71,7 +71,7 @@ const App = new class {
 		// NORMAL LIGHTNING
 		const rayCount = 50;
 		const target = new Vector(10, 25);
-		const sideMargin = 0;
+		const sideMargin = 10;
 		const stepSize = (this.size.x + 2 * sideMargin) / rayCount;
 		for (let x = -sideMargin; x <= this.size.x + sideMargin; x += stepSize)	
 		{
@@ -167,7 +167,9 @@ const App = new class {
 	
 
 	render() {
+		let start = new Date();
 		this.renderer.render();
+		console.log('dt', new Date() - start);
 		// requestAnimationFrame(() => this.render());
 	}
 }

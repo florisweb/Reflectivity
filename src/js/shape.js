@@ -6,15 +6,33 @@ export class Shape {
 	#material;
 
 	area = 0;
+	boundingBox = {
+		x: [Infinity, -Infinity],
+		y: [Infinity, -Infinity]
+	}
 
 	constructor({vectors}) {
 		this.vectors = vectors;
+
+		for (let v of this.vectors)
+		{
+			if (v.x < this.boundingBox.x[0]) this.boundingBox.x[0] = v.x;
+			if (v.x > this.boundingBox.x[1]) this.boundingBox.x[1] = v.x;
+			if (v.y < this.boundingBox.y[0]) this.boundingBox.y[0] = v.y;
+			if (v.y > this.boundingBox.y[1]) this.boundingBox.y[1] = v.y;
+		}
 	}
+
 	setMaterial(_material) {
 		this.#material = _material;
 	}
 
 	pointIsInside(_point) {
+		let delta = this.#material.position.difference(_point);
+		if (delta.x < this.boundingBox.x[0] || delta.x > this.boundingBox.x[1] || 
+			delta.y < this.boundingBox.y[0] || delta.y > this.boundingBox.y[1]
+		) return false;
+
 		let startPoint = new Vector(-100, -100);
 		let testLine = new Line({position: startPoint, delta: startPoint.difference(_point)});
 		return this.getIntersections(testLine).filter(int => int.t1 >= 0 && int.t1 <= 1).length % 2 === 1; 
