@@ -31,7 +31,8 @@ export default class LightRay {
 			// App.renderer.drawVector(intersections[0].position, intersections[0].normal, '#00f');
 			let normalAngle = intersections[0].normal.angle;
 			let inAngle = this.direction.angle - Math.PI;
-			let dAngleIn = Math.abs(normalAngle - inAngle);
+			let dAngleIn = normalAngle - inAngle;
+
 
 			let dAngleOut = Math.asin(Math.sin(dAngleIn) * prevRefIndex / curRefIndex);
 			let outNormal = normalAngle + Math.PI; 
@@ -40,6 +41,8 @@ export default class LightRay {
 				dAngleOut = -dAngleIn;
 				outNormal = normalAngle
 			}
+
+			// console.log(dAngleIn/Math.PI*180,dAngleOut / Math.PI*180)
 			let outAngle = outNormal - dAngleOut;
 			let newRay = new LightRay({
 				position: intersections[0].position, 
@@ -72,7 +75,6 @@ export default class LightRay {
 					position: prevPos.copy(),
 					delta: prevPos.difference(newPos)
 				}))
-
 
 				prevPos = newPos.copy();
 			}
