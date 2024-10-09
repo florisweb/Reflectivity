@@ -21,103 +21,125 @@ const App = new class {
 	constructor() {
 		window.App = this;
 
-		// this.materials.push(new Material({
-		// 	refractiveIndex: 1.5,
-		// 	position: new Vector(5, 10 + 1),
-		// 	shape: new BoxShape({width: 15, height: 1})
-		// }));
+		const lenticuleHeight = 2.5;
+		const lenticuleRadius = 1.5;
+		const refractiveIndex = 2.2;
+		const minMargin = 0;
+		
+		const lenticules = 3;
+		const reflectiveThickness = .1;
+
+		for (let i = 0; i < lenticules; i++)
+		{
+			let x = this.size.x / 2 + i * lenticuleRadius * 2 - lenticules * lenticuleRadius + lenticuleRadius;
+			let y = this.size.y - lenticuleHeight + lenticuleRadius - reflectiveThickness - 1;
+
+			this.materials.push(new Material({
+				refractiveIndex: refractiveIndex, // 2.5 
+				position: new Vector(x, y),
+				shape: new LenticuleShape({radius: lenticuleRadius, height: lenticuleHeight, segments: 2000})
+			}));
+
+				this.materials.push(new Material({
+					color: '#f00',
+					position: new Vector(x - lenticuleRadius, y - lenticuleRadius + lenticuleHeight - minMargin),
+					shape: new BoxShape({width: lenticuleRadius, height: reflectiveThickness})
+				}));
+				this.materials.push(new Material({
+					color: '#0f0',
+					position: new Vector(x, y - lenticuleRadius + lenticuleHeight - minMargin),
+					shape: new BoxShape({width: lenticuleRadius, height: reflectiveThickness})
+				}));
+		}
 		
 
-		// this.materials.push(new Material({
-		// 	refractiveIndex: 3,
-		// 	position: new Vector(5, 12),
-		// 	shape: new BoxShape({width: 15, height: 1})
-		// }));
 
-		// this.materials.push(new Material({
-		// 	refractiveIndex: 3.5,
-		// 	position: new Vector(6, 12),
-		// 	shape: new CircleShape({radius: 3, startAngle: Math.PI, stopAngle: 2 * Math.PI, segments: 250})
-		// }));
-		
-		this.materials.push(new Material({
-			refractiveIndex: 2.5, // 2.5
-			position: new Vector(11, 12),
-			shape: new LenticuleShape({radius: 1.5, height: 2.3, segments: 250})
-		}));
-		this.materials.push(new Material({
-			refractiveIndex: 2.5, // 2.5
-			position: new Vector(11 - 3, 12),
-			shape: new LenticuleShape({radius: 1.5, height: 2.3, segments: 250})
-		}));
-		this.materials.push(new Material({
-			refractiveIndex: 2.5, // 2.5
-			position: new Vector(11 + 3, 12),
-			shape: new LenticuleShape({radius: 1.5, height: 2.3, segments: 250})
-		}));
-
-		
-
-		this.materials.push(new Material({
-			color: '#f00',
-			position: new Vector(1, 10 + 2.8),
-			shape: new BoxShape({width: 10, height: 1})
-		}));
-
-		this.materials.push(new Material({
-			color: '#0f0',
-			position: new Vector(11, 10 + 2.8),
-			shape: new BoxShape({width: 8, height: 1})
-		}));
+		// NORMAL LIGHTNING
 
 
+		const rayCount = 50;
+		const target = new Vector(10, 25);
+		const sideMargin = 0;
+		const stepSize = (this.size.x + 2 * sideMargin) / rayCount;
+		for (let x = -sideMargin; x <= this.size.x + sideMargin; x += stepSize)	
+		{
+			let delta = new Vector(x, 0).difference(target)
+			this.lightRays.push(new LightRay({
+				position: new Vector(x, 0),
+				direction: delta,
+				color: '#fff'
+			}));	
+		}
 
-
-			// this.lightRays.push(new LightRay({
-			// 	position: new Vector(.5, 9),
-			// 	direction: new Vector(4.5, 1)
-			// }));	
-
-			// this.lightRays.push(new LightRay({
-			// 	position: new Vector(15, 9),
-			// 	direction: new Vector(-1.5, -1)
-			// }));	
-
-		// for (let i = 0; i < 10; i++)	
+		// const widthDomain = 1.3;
+		// for (let x = -widthDomain; x <= widthDomain; x += widthDomain * 2 / rayCount)	
 		// {
 		// 	this.lightRays.push(new LightRay({
-		// 		position: new Vector(7, 6),
-		// 		direction: new Vector(i / 10, 1)
-		// 	}));	
-		// }
-
-	
-
-		// for (let i = 0; i < 13; i++)	
-		// {
-		// 	this.lightRays.push(new LightRay({
-		// 		position: new Vector(9 + i / 3, 0),
+		// 		position: new Vector(this.size.x / 2 + x, 0),
 		// 		direction: new Vector(0, 1),
 		// 	}));	
 		// }
 
 
+
+
+
+
+
+		
+		// let baseAngle = -.65;
+		// let offset = 0.1;
+		// let start = baseAngle - offset;
+		// let end = baseAngle + offset;
+		// let steps = 5;
+		// for (let i = 0; i < steps; i++)	
+		// {
+		// 	this.lightRays.push(new LightRay({
+		// 		position: new Vector(20, 0),
+		// 		direction: new Vector(start + (end - start) / (steps - 1) * i, 1),
+		// 	}));	
+		// }
+
+	
+
+
+		// ANGLE DEPENDENT COLOR
 		// for (let i = 0; i < 5; i++)	
 		// {
 		// 	this.lightRays.push(new LightRay({
-		// 		position: new Vector(3 + i / 3, 0),
-		// 		direction: new Vector(.6, 1),
+		// 		position: new Vector(7 - 3 + i / 5, 0),
+		// 		direction: new Vector(.3, 1),
+		// 	}));	
+		// }
+
+		// for (let i = 0; i < 5; i++)	
+		// {
+		// 	this.lightRays.push(new LightRay({
+		// 		position: new Vector(10.75 + i / 5, 0),
+		// 		direction: new Vector(0, 1),
+		// 	}));	
+		// }
+
+		// for (let i = 0; i < 5; i++)	
+		// {
+		// 	this.lightRays.push(new LightRay({
+		// 		position: new Vector(14.1 + 3 + i / 5, 0),
+		// 		direction: new Vector(-.3, 1),
+		// 	}));	
+		// }
+
+		// const rayCount = 20;
+		// for (let i = 0; i < rayCount; i++)	
+		// {
+		// 	this.lightRays.push(new LightRay({
+		// 		position: new Vector(15.1 + 3 + i / rayCount, 0),
+		// 		direction: new Vector(-.5, 1),
 		// 	}));	
 		// }
 
 
-		for (let i = 0; i < 5; i++)	
-		{
-			this.lightRays.push(new LightRay({
-				position: new Vector(-8 + i / 3, 0),
-				direction: new Vector(1.3, 1),
-			}));	
-		}
+
+	
 
 
 		this.render();

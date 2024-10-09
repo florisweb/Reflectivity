@@ -18,7 +18,7 @@ export default class LightRay {
 	}
 
 	computeSections(_materials, _prevMaterial) {
-		const minorTDiff = .0001;
+		const minorTDiff = .0000001;
 
 		let intersections = this.#getPrimaryIntersections(_materials);
 		intersections = intersections.filter(int => int.t1 > minorTDiff);
@@ -59,7 +59,7 @@ export default class LightRay {
 				outNormal = normalAngle
 			}
 
-			// console.log(dAngleIn/Math.PI*180,dAngleOut / Math.PI*180, prevRefIndex, curRefIndex)
+			console.log(dAngleIn/Math.PI*180,dAngleOut / Math.PI*180, 'n1', prevRefIndex, 'n2', curRefIndex)
 			let outAngle = outNormal - dAngleOut;
 			let newRay = new LightRay({
 				position: intersections[0].position, 
