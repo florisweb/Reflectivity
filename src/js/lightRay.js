@@ -4,13 +4,14 @@ export default class LightRay {
 	position = new Vector(5, 5);
 	direction = new Vector(1, 1);
 	wavelength = 500;
+	markerColor = '#333';
 
 
-
-	constructor({position, direction, wavelength}) {
+	constructor({position, direction, wavelength, markerColor}) {
 		this.direction = direction;
 		this.position = position;
 		this.wavelength = wavelength;
+		this.markerColor = markerColor;
 	}
 
 	computeSections(_materials, _prevMaterial) {
@@ -36,7 +37,7 @@ export default class LightRay {
 
 			let dAngleOut = Math.asin(Math.sin(dAngleIn) * prevRefIndex / curRefIndex);
 			let outNormal = normalAngle + Math.PI; 
-			if (isNaN(dAngleOut)) // Reflected: Total internal reflection
+			if (isNaN(dAngleOut) || curMaterial.reflectAll) // Reflected: Total internal reflection
 			{
 				dAngleOut = -dAngleIn;
 				outNormal = normalAngle

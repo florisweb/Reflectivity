@@ -49,7 +49,7 @@ export default class Renderer {
 		let sections = _ray.computeSections(App.materials);
 
 		let startPos = this.camera.worldToPxCoord(sections[0]);
-		this.ctx.strokeStyle = '#333';
+		this.ctx.strokeStyle = _ray.markerColor;
 
 		this.ctx.beginPath()
 		this.ctx.moveTo(startPos.value[0], startPos.value[1]);
@@ -59,11 +59,6 @@ export default class Renderer {
 			this.ctx.lineTo(pos.value[0], pos.value[1]);
 		}
 		this.ctx.stroke();
-
-		for (let i = 0; i < sections.length; i++)
-		{
-			this.#drawLine(sections[i], new Vector(.1, 0).add(sections[i]), '#f00');
-		}
 	}
 
 	drawVector(_posA, _delta, _color) {

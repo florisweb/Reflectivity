@@ -33,14 +33,21 @@ const App = new class {
 		// }));
 		
 		this.materials.push(new Material({
-			refractiveIndex: 2,
-			position: new Vector(10, 12),
-			shape: new LenticuleShape({radius: 1.5, height: 2, segments: 100})
+			refractiveIndex: 2.9,
+			position: new Vector(11, 12),
+			shape: new LenticuleShape({radius: 1.5, height: 2.3, segments: 100})
 		}));
+
+		// this.materials.push(new Material({
+		// 	refractiveIndex: 2.9,
+		// 	position: new Vector(11 - 3, 12),
+		// 	shape: new LenticuleShape({radius: 1.5, height: 2.3, segments: 100})
+		// }));
 
 		this.materials.push(new Material({
 			refractiveIndex: 1,
-			position: new Vector(1, 10 + 2.5),
+			reflectAll: true,
+			position: new Vector(1, 10 + 2.7),
 			shape: new BoxShape({width: 18, height: 1})
 		}));
 
@@ -90,18 +97,39 @@ const App = new class {
 		// 	}));	
 		// }
 
-		// this.lightRays.push(new LightRay({
-		// 		position: new Vector(9, 0),
-		// 		direction: new Vector(0, 1)
-		// 	}));	
-
-		for (let i = 0; i < 5; i++)	
-		{
-			this.lightRays.push(new LightRay({
-				position: new Vector(9 + i / 3, 0),
+		this.lightRays.push(new LightRay({
+				position: new Vector(10, 0),
 				direction: new Vector(0, 1)
 			}));	
-		}
+
+		// for (let i = 0; i < 13; i++)	
+		// {
+		// 	this.lightRays.push(new LightRay({
+		// 		position: new Vector(8 + i / 3, 0),
+		// 		direction: new Vector(0, 1),
+		// 		markerColor: '#00f'
+		// 	}));	
+		// }
+
+
+		// for (let i = 0; i < 13; i++)	
+		// {
+		// 	this.lightRays.push(new LightRay({
+		// 		position: new Vector(0 + i / 3, 0),
+		// 		direction: new Vector(.6, 1),
+		// 		markerColor: '#f00'
+		// 	}));	
+		// }
+
+
+		// for (let i = 0; i < 13; i++)	
+		// {
+		// 	this.lightRays.push(new LightRay({
+		// 		position: new Vector(-8 + i / 3, 0),
+		// 		direction: new Vector(1.3, 1),
+		// 		markerColor: '#0a0'
+		// 	}));	
+		// }
 
 
 		this.render();
