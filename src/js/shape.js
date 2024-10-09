@@ -1,11 +1,60 @@
 import Vector from './vector.js';
-
+import Line from './line.js';
 
 export class Shape {
 	vectors = [];
+	#material;
 
 	constructor({vectors}) {
 		this.vectors = vectors;
+	}
+	setMaterial(_material) {
+		this.#material = _material;
+	}
+
+	pointIsInside(_point) {
+		let startPoint = new Vector(-100, -100);
+		let testLine = new Line({position: startPoint, delta: startPoint.difference(_point)});
+		return this.getIntersections(testLine).filter(int => int.t1 >= 0 && int.t1 <= 1).length % 2 === 1; 
+	}
+
+	getIntersectionLines() {
+		let startPos = this.#material.position.copy().add(this.vectors[0]); 
+		let prevPos = startPos.copy()
+		let lines = [];
+		for (let i = 1; i < this.vectors.length; i++)
+		{
+			let newPos = this.#material.position.copy().add(this.vectors[i]);
+			lines.push(new Line({
+				position: prevPos.copy(),
+				delta: prevPos.difference(newPos)
+			}))
+
+			prevPos = newPos.copy();
+		}
+		lines.push(new Line({
+			position: prevPos.copy(),
+			delta: prevPos.difference(startPos)
+		}));
+		return lines;
+	}
+
+	getIntersections(_probeLine) {
+		let intersections = [];
+		let lines = this.getIntersectionLines();
+	
+		for (let line of lines)
+		{
+			let data = _probeLine.intersects(line);
+			if (!data) continue;
+
+			data.material = this.#material;
+			data.normal = line.delta.perpendicular.getProjection(data.position.difference(_probeLine.position));
+			data.probeLine = _probeLine;
+			data.matLine = line;
+			intersections.push(data);
+		}
+		return intersections;
 	}
 }
 

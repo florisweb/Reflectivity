@@ -10,6 +10,14 @@ const App = new class {
 	size = new Vector(20, 20);
 	renderer = new Renderer(renderCanvas, this);
 
+	getMaterialByPosition(_pos) {
+		for (let mat of this.materials)
+		{
+			if (mat.shape.pointIsInside(_pos)) return mat;
+		}
+		return false;
+	}
+
 	constructor() {
 		window.App = this;
 
@@ -35,7 +43,7 @@ const App = new class {
 		this.materials.push(new Material({
 			refractiveIndex: 2.9,
 			position: new Vector(11, 12),
-			shape: new LenticuleShape({radius: 1.5, height: 2.3, segments: 100})
+			shape: new LenticuleShape({radius: 1.5, height: 2.3, segments: 250})
 		}));
 
 		// this.materials.push(new Material({
@@ -45,9 +53,9 @@ const App = new class {
 		// }));
 
 		this.materials.push(new Material({
-			refractiveIndex: 1,
+			refractiveIndex: 0,
 			reflectAll: true,
-			position: new Vector(1, 10 + 2.7),
+			position: new Vector(1, 10 + 2.8),
 			shape: new BoxShape({width: 18, height: 1})
 		}));
 

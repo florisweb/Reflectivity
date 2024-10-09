@@ -9,8 +9,11 @@ export default class Material {
 
 	constructor({position, shape, refractiveIndex, reflectAll = false}) {
 		this.shape = shape;
+		this.shape.setMaterial(this);
+
 		this.position = position;
 		this.reflectAll = reflectAll;
-		this.refractiveIndex = reflectAll ? this.refractiveIndex : refractiveIndex || this.refractiveIndex;
+		// this.refractiveIndex = reflectAll ? this.refractiveIndex : refractiveIndex || this.refractiveIndex;
+		this.refractiveIndex = refractiveIndex || this.refractiveIndex;
 	}
 }
