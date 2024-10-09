@@ -5,6 +5,8 @@ export class Shape {
 	vectors = [];
 	#material;
 
+	area = 0;
+
 	constructor({vectors}) {
 		this.vectors = vectors;
 	}
@@ -66,6 +68,7 @@ export class BoxShape extends Shape {
 			new Vector(width, height),
 			new Vector(0, height),
 		]});
+		this.area = width * height;
 	}
 }
 
@@ -84,6 +87,7 @@ export class CircleShape extends Shape {
 		}
 
 		super({vectors: vectors});
+		this.area = Math.PI * radius**2 * (stopAngle - startAngle) / 2 / Math.PI;
 	}
 }
 
@@ -105,5 +109,6 @@ export class LenticuleShape extends Shape {
 		vectors.push(new Vector(-radius, height - radius));
 
 		super({vectors: vectors});
+		this.area = .5 * Math.PI * radius**2 + radius * 2 * (height - radius);
 	}
 }

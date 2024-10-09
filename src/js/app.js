@@ -11,10 +11,9 @@ const App = new class {
 	renderer = new Renderer(renderCanvas, this);
 
 	getMaterialByPosition(_pos) {
-		for (let mat of this.materials)
-		{
-			if (mat.shape.pointIsInside(_pos)) return mat;
-		}
+		let foundMats = this.materials.filter(mat => mat.shape.pointIsInside(_pos))
+		foundMats.sort((a, b) => a.shape.area > b.shape.area);
+		if (foundMats.length) return foundMats[0];
 		return false;
 	}
 
@@ -26,8 +25,16 @@ const App = new class {
 		const refractiveIndex = 2.2;
 		const minMargin = 0;
 		
-		const lenticules = 3;
+		const lenticules = 5;
 		const reflectiveThickness = .1;
+
+
+		// this.materials.push(new Material({
+		// 	refractiveIndex: 1.5,
+		// 	position: new Vector(this.size.x / 2 - lenticules * lenticuleRadius, 21.1),
+		// 	shape: new BoxShape({width: lenticules * lenticuleRadius * 2, height: 1})
+		// }));
+
 
 		for (let i = 0; i < lenticules; i++)
 		{
@@ -52,11 +59,16 @@ const App = new class {
 				}));
 		}
 		
+		
+		// WATER DROPLET
+		// this.materials.push(new Material({
+		// 	refractiveIndex: 1.33, // 2.5 
+		// 	position: new Vector(10, 20),
+		// 	shape: new CircleShape({radius: .4, segments: 2000})
+		// }));
 
 
 		// NORMAL LIGHTNING
-
-
 		const rayCount = 50;
 		const target = new Vector(10, 25);
 		const sideMargin = 0;
@@ -67,9 +79,17 @@ const App = new class {
 			this.lightRays.push(new LightRay({
 				position: new Vector(x, 0),
 				direction: delta,
-				color: '#fff'
+				// color: '#fff'
 			}));	
 		}
+
+		// let x = this.size.x + sideMargin;
+		// let delta = new Vector(x, 0).difference(target)
+		// this.lightRays.push(new LightRay({
+		// 		position: new Vector(x, 0),
+		// 		direction: delta,
+		// 		// color: '#fff'
+		// 	}));	
 
 		// const widthDomain = 1.3;
 		// for (let x = -widthDomain; x <= widthDomain; x += widthDomain * 2 / rayCount)	

@@ -36,8 +36,13 @@ export default class LightRay {
 			let postContactPos = intersections[0].probeLine.getPositionByT(intersections[0].t1 + minorTDiff);
 			let preMat = App.getMaterialByPosition(preContactPos);
 			let postMat = App.getMaterialByPosition(postContactPos)
-			let prevRefIndex = preMat ? preMat.refractiveIndex : 1.0;
-			let curRefIndex = postMat ? postMat.refractiveIndex : 1.0;	
+
+
+			let baseRefIndex = 1;
+			// if (intersections[0].position.y > _materials[0].position.y + 1) baseRefIndex = 1.5;
+
+			let prevRefIndex = preMat ? preMat.refractiveIndex : baseRefIndex;
+			let curRefIndex = postMat ? postMat.refractiveIndex : baseRefIndex;
 
 			sections.push({
 				pos: intersections[0].position,
@@ -59,7 +64,7 @@ export default class LightRay {
 				outNormal = normalAngle
 			}
 
-			console.log(dAngleIn/Math.PI*180,dAngleOut / Math.PI*180, 'n1', prevRefIndex, 'n2', curRefIndex)
+			// console.log(dAngleIn/Math.PI*180,dAngleOut / Math.PI*180, 'n1', prevRefIndex, 'n2', curRefIndex);
 			let outAngle = outNormal - dAngleOut;
 			let newRay = new LightRay({
 				position: intersections[0].position, 
