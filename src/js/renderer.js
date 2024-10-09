@@ -84,7 +84,7 @@ class Camera {
 	#PxToWorld;
 	#WorldToPx;
 	constructor(_renderer) {
-		const superResolution = 2;
+		const superResolution = 3;
 		window.onresize = () => {
 			_renderer.Canvas.width = _renderer.Canvas.offsetWidth * superResolution;
 			_renderer.Canvas.height = _renderer.Canvas.offsetHeight * superResolution;

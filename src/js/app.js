@@ -2,6 +2,7 @@ import Vector from './vector.js';
 import Renderer from './renderer.js';
 import Material from './material.js';
 import { BoxShape, CircleShape, LenticuleShape, InverseLenticuleShape, Shape } from './shape.js';
+import { BeamLight } from './lights.js';
 import LightRay from './lightRay.js';
 
 const App = new class {
@@ -65,7 +66,19 @@ const App = new class {
 			shape: new InverseLenticuleShape({radius: lenticuleRadius, height: lenticuleHeight, segments: 2000})
 		}));
 
+		this.materials.push(new Material({
+			color: '#f00',
+			position: new Vector(x - lenticuleRadius, y - lenticuleRadius + lenticuleHeight - minMargin),
+			shape: new BoxShape({width: lenticuleRadius, height: reflectiveThickness})
+		}));
+		this.materials.push(new Material({
+			color: '#0f0',
+			position: new Vector(x, y - lenticuleRadius + lenticuleHeight - minMargin),
+			shape: new BoxShape({width: lenticuleRadius, height: reflectiveThickness})
+		}));
 
+
+	
 
 		// LEFT - NORMAL: WITHOUT COVER
 		x = this.size.x / 2 + 0 * lenticuleRadius * 2 - lenticules * lenticuleRadius + lenticuleRadius;
@@ -75,45 +88,70 @@ const App = new class {
 			position: new Vector(x, y),
 			shape: new LenticuleShape({radius: lenticuleRadius, height: lenticuleHeight, segments: 2000})
 		}));
+
+		this.materials.push(new Material({
+			color: '#f00',
+			position: new Vector(x - lenticuleRadius, y - lenticuleRadius + lenticuleHeight - minMargin),
+			shape: new BoxShape({width: lenticuleRadius, height: reflectiveThickness})
+		}));
+		this.materials.push(new Material({
+			color: '#0f0',
+			position: new Vector(x, y - lenticuleRadius + lenticuleHeight - minMargin),
+			shape: new BoxShape({width: lenticuleRadius, height: reflectiveThickness})
+		}));
+		
 		
 
-		for (let i = 0; i < lenticules; i++)
-		{
-			let x = this.size.x / 2 + i * lenticuleRadius * 2 - lenticules * lenticuleRadius + lenticuleRadius;
-			let y = this.size.y - lenticuleHeight + lenticuleRadius - reflectiveThickness - 6;
 
-			// this.materials.push(new Material({
-			// 	refractiveIndex: 1,
-			// 	position: new Vector(x, y - lenticuleHeight),
-			// 	shape: new InverseLenticuleShape({radius: lenticuleRadius, height: lenticuleHeight, segments: 2000})
-			// }));
 
-			// this.materials.push(new Material({
-			// 	refractiveIndex: refractiveIndex,
-			// 	position: new Vector(x, y),
-			// 	shape: new LenticuleShape({radius: lenticuleRadius, height: lenticuleHeight, segments: 2000})
-			// }));
 
-				this.materials.push(new Material({
-					color: '#f00',
-					position: new Vector(x - lenticuleRadius, y - lenticuleRadius + lenticuleHeight - minMargin),
-					shape: new BoxShape({width: lenticuleRadius, height: reflectiveThickness})
-				}));
-				this.materials.push(new Material({
-					color: '#0f0',
-					position: new Vector(x, y - lenticuleRadius + lenticuleHeight - minMargin),
-					shape: new BoxShape({width: lenticuleRadius, height: reflectiveThickness})
-				}));
-		}
 
+
+		// SMALL LENTICULE - EXPERIMENTAL
+		
+		// const bigLenticuleHeight = 1.5;
+		// const protLayerHeight = 1;
+		// const smallLenticuleRadius = .5;
+		// x = this.size.x / 2 + lenticuleRadius * 3 + smallLenticuleRadius - lenticules * lenticuleRadius + lenticuleRadius;
+		
+		// this.materials.push(new Material({
+		// 	refractiveIndex: refractiveIndex,
+		// 	position: new Vector(x, y - lenticuleRadius + lenticuleHeight - bigLenticuleHeight + smallLenticuleRadius),
+		// 	shape: new LenticuleShape({radius: smallLenticuleRadius, height: bigLenticuleHeight, segments: 2000})
+		// }));
+		// this.materials.push(new Material({
+		// 	refractiveIndex: 1.5,
+		// 	position: new Vector(x, y - lenticuleRadius + lenticuleHeight - bigLenticuleHeight + smallLenticuleRadius - protLayerHeight),
+		// 	shape: new InverseLenticuleShape({radius: smallLenticuleRadius, height: protLayerHeight, segments: 2000})
+		// }));
 
 		
+		// this.materials.push(new Material({
+		// 	color: '#f00',
+		// 	position: new Vector(x - smallLenticuleRadius, y - lenticuleRadius + lenticuleHeight),
+		// 	shape: new BoxShape({width: smallLenticuleRadius, height: reflectiveThickness})
+		// }));
+		// this.materials.push(new Material({
+		// 	color: '#0f0',
+		// 	position: new Vector(x, y - lenticuleRadius + lenticuleHeight),
+		// 	shape: new BoxShape({width: smallLenticuleRadius, height: reflectiveThickness})
+		// }));
+		
+
+
+
+
 		
 		// WATER DROPLET
 		// this.materials.push(new Material({
 		// 	refractiveIndex: 1.33, // 2.5 
-		// 	position: new Vector(10, 20),
-		// 	shape: new CircleShape({radius: .4, segments: 2000})
+		// 	position: new Vector(9.5, 9.4),
+		// 	shape: new CircleShape({radius: .4, startAngle: Math.PI, segments: 2000})
+		// }));
+		// this.materials.push(new Material({
+		// 	refractiveIndex: 1.33, // 2.5 
+		// 	position: new Vector(7, 7.4),
+		// 	shape: new CircleShape({radius: 2.5, segments: 2000})
 		// }));
 
 
@@ -182,8 +220,47 @@ const App = new class {
 
 
 		// ANGLE DEPENDENT COLOR
-		const rayCount = 20;
-		const beamWidth = 1.8;
+		let rayCount = 20;
+		let beamWidth = 1.8;
+
+
+		// let light = new BeamLight({
+		// 	position: new Vector(0, 0),
+		// 	direction: new Vector(.3, 1),
+		// 	rayCount: rayCount,
+		// 	beamWidth: 4
+		// })
+		// this.lightRays = this.lightRays.concat(light.getRays());
+
+	
+
+		// light = new BeamLight({
+		// 	position: new Vector(6, 0),
+		// 	direction: new Vector(-.3, 1),
+		// 	rayCount: rayCount,
+		// 	beamWidth: 4
+		// })
+		// this.lightRays = this.lightRays.concat(light.getRays());
+
+
+
+		// light = new BeamLight({
+		// 	position: new Vector(4, 0),
+		// 	direction: new Vector(0, 1),
+		// 	rayCount: rayCount,
+		// 	beamWidth: 4
+		// })
+		// this.lightRays = this.lightRays.concat(light.getRays());
+
+
+
+
+
+
+
+
+
+
 		for (let i = 0; i < rayCount; i++)	
 		{
 			this.lightRays.push(new LightRay({
@@ -218,10 +295,6 @@ const App = new class {
 				direction: new Vector(-.3, 1),
 			}));	
 		}
-
-	
-
-
 
 	
 
