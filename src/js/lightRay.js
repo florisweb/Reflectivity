@@ -28,14 +28,19 @@ export default class LightRay {
 			let prevRefIndex = _prevMaterial ? _prevMaterial.refractiveIndex : 1.0;
 			let curRefIndex = _prevMaterial !== curMaterial ? curMaterial.refractiveIndex : 1.0;
 			
+			// App.renderer.drawVector(intersections[0].position, intersections[0].normal, '#00f');
 			let normalAngle = intersections[0].normal.angle;
 			let inAngle = this.direction.angle - Math.PI;
 			let dAngleIn = Math.abs(normalAngle - inAngle);
-			// while (dAngleIn > .5 * Math.PI) dAngleIn -= .5 * Math.PI;
-			let dAngleOut = Math.asin(Math.sin(dAngleIn) * prevRefIndex / curRefIndex);
-			console.log(dAngleIn / Math.PI * 180, dAngleOut / Math.PI * 180)
-			let outAngle = normalAngle + Math.PI - dAngleOut;
 
+			let dAngleOut = Math.asin(Math.sin(dAngleIn) * prevRefIndex / curRefIndex);
+			let outNormal = normalAngle + Math.PI; 
+			if (isNaN(dAngleOut)) // Reflected: Total internal reflection
+			{
+				dAngleOut = -dAngleIn;
+				outNormal = normalAngle
+			}
+			let outAngle = outNormal - dAngleOut;
 			let newRay = new LightRay({
 				position: intersections[0].position, 
 				direction: new Vector(1, 1).setAngle(outAngle)
@@ -83,9 +88,7 @@ export default class LightRay {
 				if (!data) continue;
 
 				data.target = material;
-				data.normal = line.delta.perpendicular;
-				if (line.delta.perpendicular.getProjection(ownLine.position).angle - line.delta.perpendicular.angle === 0) data.normal = line.delta.perpendicular.copy().scale(-1);
-
+				data.normal = line.delta.perpendicular.getProjection(data.position.difference(ownLine.position));
 
 				data.material = material;
 				intersections.push(data);

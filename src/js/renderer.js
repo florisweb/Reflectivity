@@ -66,6 +66,11 @@ export default class Renderer {
 		}
 	}
 
+	drawVector(_posA, _delta, _color) {
+		let posB = _posA.copy().add(_delta);
+		return this.#drawLine(_posA, posB, _color);
+	}
+
 	drawLine() {
 		return this.#drawLine(...arguments);
 	}
