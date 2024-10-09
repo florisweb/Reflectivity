@@ -7,14 +7,14 @@ export default class LightRay {
 	position = new Vector(5, 5);
 	direction = new Vector(1, 1);
 	wavelength = 500;
-	markerColor = '#333';
+	color = '#ccc';
 
 
-	constructor({position, direction, wavelength, markerColor}) {
+	constructor({position, direction, wavelength, color}) {
 		this.direction = direction;
 		this.position = position;
 		this.wavelength = wavelength;
-		this.markerColor = markerColor || this.markerColor;
+		this.color = color || this.color;
 	}
 
 	computeSections(_materials, _prevMaterial) {
@@ -24,12 +24,13 @@ export default class LightRay {
 		intersections = intersections.filter(int => int.t1 > minorTDiff);
 		intersections.sort((a, b) => a.t1 > b.t1);
 
-		let sections = [this.position.copy()];
+		let sections = [{
+			pos: this.position.copy(),
+			color: this.color,
+		}];
 
 		if (intersections.length)
-		{
-			sections.push(intersections[0].position);
-			
+		{	
 			let curMaterial = intersections[0].material;
 			let preContactPos = intersections[0].probeLine.getPositionByT(intersections[0].t1 - minorTDiff);
 			let postContactPos = intersections[0].probeLine.getPositionByT(intersections[0].t1 + minorTDiff);
@@ -38,7 +39,13 @@ export default class LightRay {
 			let prevRefIndex = preMat ? preMat.refractiveIndex : 1.0;
 			let curRefIndex = postMat ? postMat.refractiveIndex : 1.0;	
 
-			App.renderer.drawVector(intersections[0].position, intersections[0].normal, '#0f0');
+			sections.push({
+				pos: intersections[0].position,
+				color: this.color
+			});
+			this.color = postMat.color || this.color;
+
+			// App.renderer.drawVector(intersections[0].position, intersections[0].normal, '#0f0');
 			let normalAngle = intersections[0].normal.angle;
 			let inAngle = this.direction.angle - Math.PI;
 			let dAngleIn = (normalAngle - inAngle) % (Math.PI * 2);
@@ -52,18 +59,20 @@ export default class LightRay {
 				outNormal = normalAngle
 			}
 
-			console.log(dAngleIn/Math.PI*180,dAngleOut / Math.PI*180, prevRefIndex, curRefIndex)
+			// console.log(dAngleIn/Math.PI*180,dAngleOut / Math.PI*180, prevRefIndex, curRefIndex)
 			let outAngle = outNormal - dAngleOut;
 			let newRay = new LightRay({
 				position: intersections[0].position, 
-				direction: new Vector(1, 1).setAngle(outAngle)
+				direction: new Vector(1, 1).setAngle(outAngle),
+				color: this.color
 			});
 
 			let newSections = newRay.computeSections(_materials, intersections[0].material);
 			sections = sections.concat(newSections);
-
-
-		} else sections.push(this.position.copy().add(this.direction.copy().scale(100)));
+		} else sections.push({
+			pos: this.position.copy().add(this.direction.copy().scale(100)),
+			color: this.color,
+		});
 
 		return sections;
 	}

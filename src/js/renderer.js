@@ -30,7 +30,11 @@ export default class Renderer {
 	#renderMaterial(_material) {
 		let startPos = this.camera.worldToPxCoord(_material.shape.vectors[0].copy().add(_material.position));
 		this.ctx.strokeStyle = '#333';
-		this.ctx.fillStyle = `rgb(${255 - (_material.refractiveIndex - 1) * 50}, 255, 255)`;
+
+		if (_material.color)
+		{
+			this.ctx.fillStyle = _material.color;
+		} else this.ctx.fillStyle = `rgb(${255 - (_material.refractiveIndex - 1) * 50}, 255, 255)`;
 
 		this.ctx.beginPath()
 		this.ctx.moveTo(startPos.value[0], startPos.value[1]);
@@ -48,17 +52,10 @@ export default class Renderer {
 	#renderLightRay(_ray) {
 		let sections = _ray.computeSections(App.materials);
 
-		let startPos = this.camera.worldToPxCoord(sections[0]);
-		this.ctx.strokeStyle = _ray.markerColor;
-
-		this.ctx.beginPath()
-		this.ctx.moveTo(startPos.value[0], startPos.value[1]);
 		for (let i = 1; i < sections.length; i++)
 		{
-			let pos = this.camera.worldToPxCoord(sections[i]);
-			this.ctx.lineTo(pos.value[0], pos.value[1]);
+			this.#drawLine(sections[i - 1].pos, sections[i].pos, sections[i].color);
 		}
-		this.ctx.stroke();
 	}
 
 	drawVector(_posA, _delta, _color) {

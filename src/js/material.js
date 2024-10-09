@@ -3,17 +3,23 @@ import Vector from './vector.js';
 
 export default class Material {
 	shape;
-	refractiveIndex = 1;
 	reflectAll = false;
 	position = new Vector(5, 5);
 
-	constructor({position, shape, refractiveIndex, reflectAll = false}) {
+	refractiveIndex = 1;
+	color;
+
+	constructor({position, shape, refractiveIndex, reflectAll = false, color}) {
 		this.shape = shape;
 		this.shape.setMaterial(this);
-
 		this.position = position;
 		this.reflectAll = reflectAll;
-		// this.refractiveIndex = reflectAll ? this.refractiveIndex : refractiveIndex || this.refractiveIndex;
-		this.refractiveIndex = refractiveIndex || this.refractiveIndex;
+
+		if (color)
+		{
+			this.color = color;
+			this.reflectAll = true;
+		}
+		this.refractiveIndex = this.reflectAll ? this.refractiveIndex : refractiveIndex || this.refractiveIndex;
 	}
 }
