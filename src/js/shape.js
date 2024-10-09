@@ -62,7 +62,6 @@ export class Shape {
 	getIntersections(_probeLine) {
 		let intersections = [];
 		let lines = this.getIntersectionLines();
-	
 		for (let line of lines)
 		{
 			let data = _probeLine.intersects(line);
@@ -128,5 +127,29 @@ export class LenticuleShape extends Shape {
 
 		super({vectors: vectors});
 		this.area = .5 * Math.PI * radius**2 + radius * 2 * (height - radius);
+	}
+}
+
+
+export class InverseLenticuleShape extends Shape {
+	constructor({radius, height, segments = 200}) {
+		let vectors = [];
+		if (height < radius) height = radius;
+
+		vectors.push(new Vector(-radius, 0));
+
+		let stepSize = Math.PI / segments;
+		for (let i = -Math.PI; i < 0; i += stepSize)
+		{
+			vectors.push(new Vector(
+				radius * Math.cos(i),
+				radius * Math.sin(i) + height,
+			))
+		}
+
+		vectors.push(new Vector(radius, 0));
+
+		super({vectors: vectors});
+		this.area = (radius*radius / 2 - .5 * Math.PI * radius**2) + radius * 2 * (height - radius);
 	}
 }

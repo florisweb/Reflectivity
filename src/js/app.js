@@ -1,13 +1,13 @@
 import Vector from './vector.js';
 import Renderer from './renderer.js';
 import Material from './material.js';
-import { BoxShape, CircleShape, LenticuleShape, Shape } from './shape.js';
+import { BoxShape, CircleShape, LenticuleShape, InverseLenticuleShape, Shape } from './shape.js';
 import LightRay from './lightRay.js';
 
 const App = new class {
 	materials = [];
 	lightRays = [];
-	size = new Vector(20, 20);
+	size = new Vector(15, 15);
 	renderer = new Renderer(renderCanvas, this);
 
 	getMaterialByPosition(_pos) {
@@ -20,14 +20,25 @@ const App = new class {
 	constructor() {
 		window.App = this;
 
+	
+		// const lenticuleHeight = 2.5;
+		// const lenticuleRadius = 1.5;
+		// const refractiveIndex = 2.12;
+
 		const lenticuleHeight = 2.5;
 		const lenticuleRadius = 1.5;
-		const refractiveIndex = 2.2;
+		const refractiveIndex = 2.12;
 		const minMargin = 0;
 		
-		const lenticules = 5;
+		const lenticules = 2;
 		const reflectiveThickness = .1;
 
+
+		// this.materials.push(new Material({
+		// 	refractiveIndex: 1.5,
+		// 	position: new Vector(5, 10),
+		// 	shape: new BoxShape({width: 5, height: 5})
+		// }));
 
 		// this.materials.push(new Material({
 		// 	refractiveIndex: 1.5,
@@ -36,16 +47,52 @@ const App = new class {
 		// }));
 
 
+
+
+
+		// MIDDLE - WITH COVER
+		let x = this.size.x / 2 + 1 * lenticuleRadius * 2 - lenticules * lenticuleRadius + lenticuleRadius;
+		let y = this.size.y - lenticuleHeight + lenticuleRadius - reflectiveThickness - 6;
+
+		this.materials.push(new Material({
+			refractiveIndex: refractiveIndex + .5 * 2.56,
+			position: new Vector(x, y),
+			shape: new LenticuleShape({radius: lenticuleRadius, height: lenticuleHeight, segments: 2000})
+		}));
+		this.materials.push(new Material({
+			refractiveIndex: 1.5,
+			position: new Vector(x, y - lenticuleHeight),
+			shape: new InverseLenticuleShape({radius: lenticuleRadius, height: lenticuleHeight, segments: 2000})
+		}));
+
+
+
+		// LEFT - NORMAL: WITHOUT COVER
+		x = this.size.x / 2 + 0 * lenticuleRadius * 2 - lenticules * lenticuleRadius + lenticuleRadius;
+
+		this.materials.push(new Material({
+			refractiveIndex: refractiveIndex,
+			position: new Vector(x, y),
+			shape: new LenticuleShape({radius: lenticuleRadius, height: lenticuleHeight, segments: 2000})
+		}));
+		
+
 		for (let i = 0; i < lenticules; i++)
 		{
 			let x = this.size.x / 2 + i * lenticuleRadius * 2 - lenticules * lenticuleRadius + lenticuleRadius;
-			let y = this.size.y - lenticuleHeight + lenticuleRadius - reflectiveThickness - 1;
+			let y = this.size.y - lenticuleHeight + lenticuleRadius - reflectiveThickness - 6;
 
-			this.materials.push(new Material({
-				refractiveIndex: refractiveIndex, // 2.5 
-				position: new Vector(x, y),
-				shape: new LenticuleShape({radius: lenticuleRadius, height: lenticuleHeight, segments: 2000})
-			}));
+			// this.materials.push(new Material({
+			// 	refractiveIndex: 1,
+			// 	position: new Vector(x, y - lenticuleHeight),
+			// 	shape: new InverseLenticuleShape({radius: lenticuleRadius, height: lenticuleHeight, segments: 2000})
+			// }));
+
+			// this.materials.push(new Material({
+			// 	refractiveIndex: refractiveIndex,
+			// 	position: new Vector(x, y),
+			// 	shape: new LenticuleShape({radius: lenticuleRadius, height: lenticuleHeight, segments: 2000})
+			// }));
 
 				this.materials.push(new Material({
 					color: '#f00',
@@ -58,6 +105,8 @@ const App = new class {
 					shape: new BoxShape({width: lenticuleRadius, height: reflectiveThickness})
 				}));
 		}
+
+
 		
 		
 		// WATER DROPLET
@@ -69,27 +118,36 @@ const App = new class {
 
 
 		// NORMAL LIGHTNING
-		const rayCount = 50;
-		const target = new Vector(10, 25);
-		const sideMargin = 10;
-		const stepSize = (this.size.x + 2 * sideMargin) / rayCount;
-		for (let x = -sideMargin; x <= this.size.x + sideMargin; x += stepSize)	
-		{
-			let delta = new Vector(x, 0).difference(target)
-			this.lightRays.push(new LightRay({
-				position: new Vector(x, 0),
-				direction: delta,
-				// color: '#fff'
-			}));	
-		}
-
-		// let x = this.size.x + sideMargin;
-		// let delta = new Vector(x, 0).difference(target)
-		// this.lightRays.push(new LightRay({
+		// const rayCount = 50;
+		// const target = new Vector(8, 13);
+		// const sideMargin = 10;
+		// const stepSize = (this.size.x + 2 * sideMargin) / rayCount;
+		// for (let x = -sideMargin; x <= this.size.x + sideMargin; x += stepSize)	
+		// {
+		// 	let delta = new Vector(x, 0).difference(target)
+		// 	this.lightRays.push(new LightRay({
 		// 		position: new Vector(x, 0),
 		// 		direction: delta,
 		// 		// color: '#fff'
 		// 	}));	
+		// }
+
+		// let x = this.size.x + sideMargin;
+		// let delta = new Vector(x, 0).difference(target)
+		// this.lightRays.push(new LightRay({
+		// 	position: new Vector(x, 0),
+		// 	direction: delta,
+		// 	// color: '#fff'
+		// }));	
+
+		// let x = -2;
+		// let delta = new Vector(x, 0).difference(target)
+		// this.lightRays.push(new LightRay({
+		// 	position: new Vector(x, 0),
+		// 	direction: delta,
+		// 	// color: '#fff'
+		// }));	
+
 
 		// const widthDomain = 1.3;
 		// for (let x = -widthDomain; x <= widthDomain; x += widthDomain * 2 / rayCount)	
@@ -124,38 +182,44 @@ const App = new class {
 
 
 		// ANGLE DEPENDENT COLOR
-		// for (let i = 0; i < 5; i++)	
-		// {
-		// 	this.lightRays.push(new LightRay({
-		// 		position: new Vector(7 - 3 + i / 5, 0),
-		// 		direction: new Vector(.3, 1),
-		// 	}));	
-		// }
+		const rayCount = 20;
+		const beamWidth = 1.8;
+		for (let i = 0; i < rayCount; i++)	
+		{
+			this.lightRays.push(new LightRay({
+				position: new Vector(7.5 + lenticuleRadius - lenticuleRadius * 2 - beamWidth / 2 + beamWidth * i / rayCount, 0),
+				direction: new Vector(.3, 1),
+			}));	
+		}
 
-		// for (let i = 0; i < 5; i++)	
-		// {
-		// 	this.lightRays.push(new LightRay({
-		// 		position: new Vector(10.75 + i / 5, 0),
-		// 		direction: new Vector(0, 1),
-		// 	}));	
-		// }
 
-		// for (let i = 0; i < 5; i++)	
-		// {
-		// 	this.lightRays.push(new LightRay({
-		// 		position: new Vector(14.1 + 3 + i / 5, 0),
-		// 		direction: new Vector(-.3, 1),
-		// 	}));	
-		// }
+		for (let i = 0; i < rayCount; i++)	
+		{
+			this.lightRays.push(new LightRay({
+				position: new Vector(7.5 + lenticuleRadius + lenticuleRadius * 2 - beamWidth / 2 + beamWidth * i / rayCount, 0),
+				direction: new Vector(-.3, 1),
+			}));	
+		}
 
-		// const rayCount = 20;
-		// for (let i = 0; i < rayCount; i++)	
-		// {
-		// 	this.lightRays.push(new LightRay({
-		// 		position: new Vector(15.1 + 3 + i / rayCount, 0),
-		// 		direction: new Vector(-.5, 1),
-		// 	}));	
-		// }
+
+		for (let i = 0; i < rayCount; i++)	
+		{
+			this.lightRays.push(new LightRay({
+				position: new Vector(7.5 + lenticuleRadius - lenticuleRadius * 4 - beamWidth / 2 + beamWidth * i / rayCount, 0),
+				direction: new Vector(.3, 1),
+			}));	
+		}
+
+
+		for (let i = 0; i < rayCount; i++)	
+		{
+			this.lightRays.push(new LightRay({
+				position: new Vector(7.5 + lenticuleRadius  - beamWidth / 2 + beamWidth * i / rayCount, 0),
+				direction: new Vector(-.3, 1),
+			}));	
+		}
+
+	
 
 
 

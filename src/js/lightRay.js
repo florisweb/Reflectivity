@@ -11,17 +11,17 @@ export default class LightRay {
 
 
 	constructor({position, direction, wavelength, color}) {
-		this.direction = direction;
+		this.direction = direction.setLength(1);
 		this.position = position;
 		this.wavelength = wavelength;
 		this.color = color || this.color;
 	}
 
 	computeSections(_materials, _prevMaterial) {
-		const minorTDiff = .0000001;
+		const minorTDiff = .0001;
 
 		let intersections = this.#getPrimaryIntersections(_materials);
-		intersections = intersections.filter(int => int.t1 > minorTDiff);
+		intersections = intersections.filter(int => int.t1 > 0.0001);
 		intersections.sort((a, b) => a.t1 > b.t1);
 
 		let sections = [{
@@ -64,7 +64,7 @@ export default class LightRay {
 				outNormal = normalAngle
 			}
 
-			// console.log(dAngleIn/Math.PI*180,dAngleOut / Math.PI*180, 'n1', prevRefIndex, 'n2', curRefIndex);
+			// console.log(dAngleIn/Math.PI*180,dAngleOut / Math.PI*180, 'n1', prevRefIndex, 'n2', curRefIndex, preMat, postMat, preContactPos, intersections[0].position, postContactPos);
 			let outAngle = outNormal - dAngleOut;
 			let newRay = new LightRay({
 				position: intersections[0].position, 
