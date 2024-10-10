@@ -17,7 +17,8 @@ export default class Renderer {
 		this.ctx.clearRect(0, 0, this.Canvas.width, this.Canvas.height);
 		for (let material of App.materials)
 		{
-			this.#renderMaterial(material);
+			let hovered = material === App.inputHandler.curHoverMaterial;
+			this.#renderMaterial(material, hovered);
 		}
 
 		for (let lightRay of App.lightRays)
@@ -27,9 +28,10 @@ export default class Renderer {
 	}
 
 
-	#renderMaterial(_material) {
+	#renderMaterial(_material, _hovered = false) {
 		let startPos = this.camera.worldToPxCoord(_material.shape.vectors[0].copy().add(_material.position));
 		this.ctx.strokeStyle = '#333';
+		if (_hovered) this.ctx.lineWidth = 3;
 
 		if (_material.color)
 		{
@@ -47,11 +49,11 @@ export default class Renderer {
 		this.ctx.closePath();
 		this.ctx.stroke();
 		this.ctx.fill();
+		this.ctx.lineWidth = 1;
 	}
 
 	#renderLightRay(_ray) {
-		let sections = _ray.computeSections(App.materials);
-
+		let sections = _ray.cachedSections;
 		for (let i = 1; i < sections.length; i++)
 		{
 			this.#drawLine(sections[i - 1].pos, sections[i].pos, sections[i].color);

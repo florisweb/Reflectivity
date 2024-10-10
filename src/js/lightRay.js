@@ -17,7 +17,16 @@ export default class LightRay {
 		this.color = color || this.color;
 	}
 
-	computeSections(_materials, _prevMaterial) {
+	#cachedSections = [];
+	get cachedSections() {
+		return this.#cachedSections;
+	}
+
+	calcPath(_materials) {
+		this.#cachedSections = this.computeSections(_materials);
+	}
+
+	computeSections(_materials) {
 		const minorTDiff = .0001;
 
 		let intersections = this.#getPrimaryIntersections(_materials);
@@ -72,7 +81,7 @@ export default class LightRay {
 				color: this.color
 			});
 
-			let newSections = newRay.computeSections(_materials, intersections[0].material);
+			let newSections = newRay.computeSections(_materials);
 			sections = sections.concat(newSections);
 		} else sections.push({
 			pos: this.position.copy().add(this.direction.copy().scale(100)),
@@ -84,9 +93,7 @@ export default class LightRay {
 
 	#getPrimaryIntersections(_materials) {
 		let ownLine = new Line({position: this.position, delta: this.direction.copy().scale(1000)});
-
 		let intersections = [];
-
 		for (let material of _materials)
 		{
 			let curIntersects = material.shape.getIntersections(ownLine);

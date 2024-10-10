@@ -1,15 +1,19 @@
 import Vector from './vector.js';
 import Renderer from './renderer.js';
+import InputHandler from './InputHandler.js';
 import Material from './material.js';
 import { BoxShape, CircleShape, LenticuleShape, InverseLenticuleShape, Shape } from './shape.js';
 import { BeamLight } from './lights.js';
 import LightRay from './lightRay.js';
+
+
 
 const App = new class {
 	materials = [];
 	lightRays = [];
 	size = new Vector(15, 15);
 	renderer = new Renderer(renderCanvas, this);
+	inputHandler = new InputHandler(renderCanvas, this);
 
 	getMaterialByPosition(_pos) {
 		let foundMats = this.materials.filter(mat => mat.shape.pointIsInside(_pos))
@@ -297,17 +301,20 @@ const App = new class {
 		}
 
 	
-
-
 		this.render();
+		setTimeout(() => this.calculateRayPaths(), 0);
 	}
 	
 
-	render() {
+	calculateRayPaths() {
 		let start = new Date();
-		this.renderer.render();
+		for (let ray of this.lightRays) ray.calcPath(this.materials)
 		console.log('dt', new Date() - start);
-		// requestAnimationFrame(() => this.render());
+	}
+
+	render() {
+		this.renderer.render();
+		requestAnimationFrame(() => this.render());
 	}
 }
 
