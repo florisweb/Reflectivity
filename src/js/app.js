@@ -3,9 +3,9 @@ import Renderer from './renderer.js';
 import InputHandler from './InputHandler.js';
 import Material from './material.js';
 import { BoxShape, CircleShape, LenticuleShape, InverseLenticuleShape, Shape } from './shape.js';
-import { BeamLight } from './lights.js';
+import { BeamLight, SunLight } from './lights.js';
 import LightRay from './lightRay.js';
-import { LenticuleComposite, LenticuleCompositeWithCover } from './compositeGenerators.js';
+import { LenticuleComposite, LenticuleCompositeWithCover, NanoMaterialComposite } from './compositeGenerators.js';
 
 const App = new class {
 	materials = [];
@@ -57,28 +57,136 @@ const App = new class {
 
 		const position = new Vector(this.size.x / 2 - lenticuleRadius * 2, this.size.y / 2 + 1.2);
 
-		let lentComp = new LenticuleComposite({
-			refractiveIndex: refractiveIndex,
-			radius: lenticuleRadius,
-			height: lenticuleHeight,
-			position: position
-		})
-		this.addComposite(lentComp);
+		// let lentComp = new LenticuleComposite({
+		// 	refractiveIndex: refractiveIndex,
+		// 	radius: lenticuleRadius,
+		// 	height: lenticuleHeight,
+		// 	position: position
+		// })
+		// this.addComposite(lentComp);
 
-		const coverHeight = .1;
+		// const coverHeight = .1;
 
-		let lentCoverComp = new LenticuleCompositeWithCover({
-			refractiveIndex: refractiveIndex + .5 * 2.56,
-			coverRefractiveIndex: 1.5,
-			radius: lenticuleRadius,
-			height: lenticuleHeight,
-			coverHeight: coverHeight,
-			position: position.copy().add(new Vector(lenticuleRadius * 2, -coverHeight))
-		})
-		this.addComposite(lentCoverComp);
+		// let lentCoverComp = new LenticuleCompositeWithCover({
+		// 	refractiveIndex: refractiveIndex + .5 * 2.56,
+		// 	coverRefractiveIndex: 1.5,
+		// 	radius: lenticuleRadius,
+		// 	height: lenticuleHeight,
+		// 	coverHeight: coverHeight,
+		// 	position: position.copy().add(new Vector(lenticuleRadius * 2, -coverHeight))
+		// })
+		// this.addComposite(lentCoverComp);
+
+
+		// let rayCount = 20;
+		// let beamWidth = 1.8;
+		// for (let i = 0; i < rayCount; i++)	
+		// {
+		// 	this.lightRays.push(new LightRay({
+		// 		position: new Vector(7.5 + lenticuleRadius - lenticuleRadius * 2 - beamWidth / 2 + beamWidth * i / rayCount, 0),
+		// 		direction: new Vector(.3, 1),
+		// 	}));	
+		// }
+
+
+		// for (let i = 0; i < rayCount; i++)	
+		// {
+		// 	this.lightRays.push(new LightRay({
+		// 		position: new Vector(7.5 + lenticuleRadius + lenticuleRadius * 2 - beamWidth / 2 + beamWidth * i / rayCount, 0),
+		// 		direction: new Vector(-.3, 1),
+		// 	}));	
+		// }
+
+
+		// for (let i = 0; i < rayCount; i++)	
+		// {
+		// 	this.lightRays.push(new LightRay({
+		// 		position: new Vector(7.5 + lenticuleRadius - lenticuleRadius * 4 - beamWidth / 2 + beamWidth * i / rayCount, 0),
+		// 		direction: new Vector(.3, 1),
+		// 	}));	
+		// }
+
+
+		// for (let i = 0; i < rayCount; i++)	
+		// {
+		// 	this.lightRays.push(new LightRay({
+		// 		position: new Vector(7.5 + lenticuleRadius  - beamWidth / 2 + beamWidth * i / rayCount, 0),
+		// 		direction: new Vector(-.3, 1),
+		// 	}));	
+		// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		// MIDDLE - WITH COVER
 		
+
+		let lentCoverComp = new NanoMaterialComposite({
+			stepWidth: 1,
+			stepHeight: 1,
+			steps: 13,
+			position: new Vector(0, 5),
+		})
+		this.addComposite(lentCoverComp);
+
+		let rayCount = 20;
+		let beamWidth = 5;
+		// for (let i = 0; i < rayCount; i++)	
+		// {
+		// 	this.lightRays.push(new LightRay({
+		// 		position: new Vector(3 + lenticuleRadius + lenticuleRadius * 2 - beamWidth / 2 + beamWidth * i / rayCount, 0),
+		// 		direction: new Vector(0, 1),
+		// 	}));	
+		// }
+
+
+		// for (let i = 0; i < rayCount; i++)	
+		// {
+		// 	this.lightRays.push(new LightRay({
+		// 		position: new Vector(15 + lenticuleRadius + lenticuleRadius * 2 - beamWidth / 2 + beamWidth * i / rayCount, 0),
+		// 		direction: new Vector(-1, 1),
+		// 	}));	
+		// }	
+
+		// let light = new BeamLight({
+		// 	position: new Vector(16, 6.1),
+		// 	direction: new Vector(-1, .1),
+		// 	rayCount: rayCount,
+		// 	beamWidth: 5
+		// })
+		// this.lightRays = this.lightRays.concat(light.getRays());
+
+		// light = new BeamLight({
+		// 	position: new Vector(13, 0),
+		// 	direction: new Vector(-1, 1),
+		// 	rayCount: rayCount,
+		// 	beamWidth: 5
+		// })
+		// // this.lightRays = this.lightRays.concat(light.getRays());
+		// light = new BeamLight({
+		// 	position: new Vector(3.7, 0),
+		// 	direction: new Vector(-0.1, 1),
+		// 	rayCount: rayCount,
+		// 	beamWidth: 5
+		// })
+		// this.lightRays = this.lightRays.concat(light.getRays());
+
+
+		this.lightRays = this.lightRays.concat(new SunLight({position: new Vector(this.size.x, 0), minAngle: Math.PI * .5, maxAngle: Math.PI,  rayCount: 100}).getRays());
+
+
+	
 
 
 
@@ -221,10 +329,6 @@ const App = new class {
 		// 		position: new Vector(this.size.x / 2 + x, 0),
 		// 		direction: new Vector(0, 1),
 		// 	}));	
-		// }
-
-
-
 
 
 
@@ -247,8 +351,7 @@ const App = new class {
 
 
 		// ANGLE DEPENDENT COLOR
-		let rayCount = 20;
-		let beamWidth = 1.8;
+		
 
 
 		// let light = new BeamLight({
@@ -284,44 +387,6 @@ const App = new class {
 
 
 
-
-
-
-
-		for (let i = 0; i < rayCount; i++)	
-		{
-			this.lightRays.push(new LightRay({
-				position: new Vector(7.5 + lenticuleRadius - lenticuleRadius * 2 - beamWidth / 2 + beamWidth * i / rayCount, 0),
-				direction: new Vector(.3, 1),
-			}));	
-		}
-
-
-		for (let i = 0; i < rayCount; i++)	
-		{
-			this.lightRays.push(new LightRay({
-				position: new Vector(7.5 + lenticuleRadius + lenticuleRadius * 2 - beamWidth / 2 + beamWidth * i / rayCount, 0),
-				direction: new Vector(-.3, 1),
-			}));	
-		}
-
-
-		for (let i = 0; i < rayCount; i++)	
-		{
-			this.lightRays.push(new LightRay({
-				position: new Vector(7.5 + lenticuleRadius - lenticuleRadius * 4 - beamWidth / 2 + beamWidth * i / rayCount, 0),
-				direction: new Vector(.3, 1),
-			}));	
-		}
-
-
-		for (let i = 0; i < rayCount; i++)	
-		{
-			this.lightRays.push(new LightRay({
-				position: new Vector(7.5 + lenticuleRadius  - beamWidth / 2 + beamWidth * i / rayCount, 0),
-				direction: new Vector(-.3, 1),
-			}));	
-		}
 
 	
 		this.render();

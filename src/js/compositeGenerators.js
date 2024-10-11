@@ -91,4 +91,47 @@ export class LenticuleCompositeWithCover extends LenticuleComposite {
 	}
 }
 
+
+
+
+
+export class NanoMaterialComposite extends Composite {
+	#position;
+	#stepHeight;
+	#stepWidth;
+	#steps;
+	setPosition(_pos) {
+		this.#position = _pos;
+	} 
+
+	constructor({position, stepHeight, stepWidth, steps}) {
+		super(...arguments);
+		this.#position = position;
+		this.#stepHeight = stepHeight;
+		this.#stepWidth = stepWidth;
+		this.#steps = steps;
+	}
+
+
+	getMaterials() {
+		const reflectiveThickness = .1;
+		let mats = [];
+
+		for (let i = 0; i < this.#steps; i++)
+		{
+			mats.push(new Material({
+				color: '#f00',
+				position: new Vector(this.#position.x + this.#stepWidth * i, this.#position.y + this.#stepHeight * i),
+				shape: new BoxShape({width: this.#stepWidth, height: reflectiveThickness})
+			}));
+			mats.push(new Material({
+				color: '#0f0',
+				position: new Vector(this.#position.x + this.#stepWidth * (i + 1), this.#position.y + this.#stepHeight * i),
+				shape: new BoxShape({width: reflectiveThickness, height: this.#stepHeight})
+			}));
+		}
+		return mats;
+	}
+}
+
 		

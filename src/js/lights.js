@@ -20,3 +20,24 @@ export class BeamLight {
 		return this.#rays;
 	}
 }
+
+
+
+export class SunLight {
+	#rays = [];
+	constructor({position, rayCount = 20, minAngle = 0, maxAngle = Math.PI * 2}) {
+
+		for (let a = minAngle; a <= maxAngle; a += (maxAngle - minAngle) / rayCount)
+		{
+			this.#rays.push(new LightRay({
+				position: position,
+				direction: new Vector(1, 0).setAngle(a),
+			}));	
+
+		}
+	}
+
+	getRays() {
+		return this.#rays;
+	}
+}
