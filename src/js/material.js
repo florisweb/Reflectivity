@@ -8,6 +8,8 @@ export default class Material {
 
 	refractiveIndex = 1;
 	color;
+	compositeParent = false;
+	x = 5;
 
 	constructor({position, shape, refractiveIndex, reflectAll = false, color}) {
 		this.shape = shape;

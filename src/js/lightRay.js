@@ -8,6 +8,7 @@ export default class LightRay {
 	direction = new Vector(1, 1);
 	wavelength = 500;
 	color = '#ccc';
+	#startColor = '#ccc';
 
 
 	constructor({position, direction, wavelength, color}) {
@@ -15,11 +16,16 @@ export default class LightRay {
 		this.position = position;
 		this.wavelength = wavelength;
 		this.color = color || this.color;
+		this.#startColor = color || this.#startColor;
 	}
 
 	#cachedSections = [];
 	get cachedSections() {
 		return this.#cachedSections;
+	}
+	unCachePath() {
+		this.#cachedSections = [];
+		this.color = this.#startColor;
 	}
 
 	calcPath(_materials) {

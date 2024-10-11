@@ -5,12 +5,13 @@ import Material from './material.js';
 import { BoxShape, CircleShape, LenticuleShape, InverseLenticuleShape, Shape } from './shape.js';
 import { BeamLight } from './lights.js';
 import LightRay from './lightRay.js';
-
-
+import { LenticuleComposite, LenticuleCompositeWithCover } from './compositeGenerators.js';
 
 const App = new class {
 	materials = [];
 	lightRays = [];
+	composites = [];
+
 	size = new Vector(15, 15);
 	renderer = new Renderer(renderCanvas, this);
 	inputHandler = new InputHandler(renderCanvas, this);
@@ -54,55 +55,77 @@ const App = new class {
 
 
 
+		const position = new Vector(this.size.x / 2 - lenticuleRadius * 2, this.size.y / 2 + 1.2);
+
+		let lentComp = new LenticuleComposite({
+			refractiveIndex: refractiveIndex,
+			radius: lenticuleRadius,
+			height: lenticuleHeight,
+			position: position
+		})
+		this.addComposite(lentComp);
+
+		const coverHeight = .1;
+
+		let lentCoverComp = new LenticuleCompositeWithCover({
+			refractiveIndex: refractiveIndex + .5 * 2.56,
+			coverRefractiveIndex: refractiveIndex,
+			radius: lenticuleRadius,
+			height: lenticuleHeight,
+			coverHeight: coverHeight,
+			position: position.copy().add(new Vector(lenticuleRadius * 2, -coverHeight))
+		})
+		this.addComposite(lentCoverComp);
 
 		// MIDDLE - WITH COVER
-		let x = this.size.x / 2 + 1 * lenticuleRadius * 2 - lenticules * lenticuleRadius + lenticuleRadius;
-		let y = this.size.y - lenticuleHeight + lenticuleRadius - reflectiveThickness - 6;
+		
 
-		this.materials.push(new Material({
-			refractiveIndex: refractiveIndex + .5 * 2.56,
-			position: new Vector(x, y),
-			shape: new LenticuleShape({radius: lenticuleRadius, height: lenticuleHeight, segments: 2000})
-		}));
-		this.materials.push(new Material({
-			refractiveIndex: 1.5,
-			position: new Vector(x, y - lenticuleHeight),
-			shape: new InverseLenticuleShape({radius: lenticuleRadius, height: lenticuleHeight, segments: 2000})
-		}));
 
-		this.materials.push(new Material({
-			color: '#f00',
-			position: new Vector(x - lenticuleRadius, y - lenticuleRadius + lenticuleHeight - minMargin),
-			shape: new BoxShape({width: lenticuleRadius, height: reflectiveThickness})
-		}));
-		this.materials.push(new Material({
-			color: '#0f0',
-			position: new Vector(x, y - lenticuleRadius + lenticuleHeight - minMargin),
-			shape: new BoxShape({width: lenticuleRadius, height: reflectiveThickness})
-		}));
+
+		// this.materials.push(new Material({
+		// 	refractiveIndex: refractiveIndex + .5 * 2.56,
+		// 	position: new Vector(x, y),
+		// 	shape: new LenticuleShape({radius: lenticuleRadius, height: lenticuleHeight, segments: 100})
+		// }));
+		// this.materials.push(new Material({
+		// 	refractiveIndex: 1.5,
+		// 	position: new Vector(x, y - lenticuleHeight),
+		// 	shape: new InverseLenticuleShape({radius: lenticuleRadius, height: lenticuleHeight, segments: 100})
+		// }));
+
+		// this.materials.push(new Material({
+		// 	color: '#f00',
+		// 	position: new Vector(x - lenticuleRadius, y - lenticuleRadius + lenticuleHeight - minMargin),
+		// 	shape: new BoxShape({width: lenticuleRadius, height: reflectiveThickness})
+		// }));
+		// this.materials.push(new Material({
+		// 	color: '#0f0',
+		// 	position: new Vector(x, y - lenticuleRadius + lenticuleHeight - minMargin),
+		// 	shape: new BoxShape({width: lenticuleRadius, height: reflectiveThickness})
+		// }));
 
 
 	
 
 		// LEFT - NORMAL: WITHOUT COVER
-		x = this.size.x / 2 + 0 * lenticuleRadius * 2 - lenticules * lenticuleRadius + lenticuleRadius;
+		// x = this.size.x / 2 + 0 * lenticuleRadius * 2 - lenticules * lenticuleRadius + lenticuleRadius;
 
-		this.materials.push(new Material({
-			refractiveIndex: refractiveIndex,
-			position: new Vector(x, y),
-			shape: new LenticuleShape({radius: lenticuleRadius, height: lenticuleHeight, segments: 2000})
-		}));
+		// this.materials.push(new Material({
+		// 	refractiveIndex: refractiveIndex,
+		// 	position: new Vector(x, y),
+		// 	shape: new LenticuleShape({radius: lenticuleRadius, height: lenticuleHeight, segments: 100})
+		// }));
 
-		this.materials.push(new Material({
-			color: '#f00',
-			position: new Vector(x - lenticuleRadius, y - lenticuleRadius + lenticuleHeight - minMargin),
-			shape: new BoxShape({width: lenticuleRadius, height: reflectiveThickness})
-		}));
-		this.materials.push(new Material({
-			color: '#0f0',
-			position: new Vector(x, y - lenticuleRadius + lenticuleHeight - minMargin),
-			shape: new BoxShape({width: lenticuleRadius, height: reflectiveThickness})
-		}));
+		// this.materials.push(new Material({
+		// 	color: '#f00',
+		// 	position: new Vector(x - lenticuleRadius, y - lenticuleRadius + lenticuleHeight - minMargin),
+		// 	shape: new BoxShape({width: lenticuleRadius, height: reflectiveThickness})
+		// }));
+		// this.materials.push(new Material({
+		// 	color: '#0f0',
+		// 	position: new Vector(x, y - lenticuleRadius + lenticuleHeight - minMargin),
+		// 	shape: new BoxShape({width: lenticuleRadius, height: reflectiveThickness})
+		// }));
 		
 		
 
@@ -305,6 +328,32 @@ const App = new class {
 		setTimeout(() => this.calculateRayPaths(), 0);
 	}
 	
+	reCalcRequired() {
+		for (let ray of this.lightRays) ray.unCachePath();
+	}
+
+	#reCalcIndex = 0;
+	reCalcPaths() {
+		this.#reCalcIndex++;
+		let originalIndex = this.#reCalcIndex;
+
+		setTimeout(() => {
+			if (originalIndex !== this.#reCalcIndex) return; 
+			this.calculateRayPaths()
+		}, 5000);
+	}
+
+	addComposite(_comp) {
+		this.composites.push(_comp);
+		this.reGenerateMaterialsFromComposites();
+	}
+
+	reGenerateMaterialsFromComposites() {
+		let preMats = this.materials.filter(m => !m.compositeParent);
+		for (let composite of this.composites) preMats = preMats.concat(composite.generate());
+		this.materials = preMats;
+	}
+
 
 	calculateRayPaths() {
 		let start = new Date();
