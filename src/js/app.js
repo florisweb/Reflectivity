@@ -69,7 +69,7 @@ const App = new class {
 
 		let lentCoverComp = new LenticuleCompositeWithCover({
 			refractiveIndex: refractiveIndex + .5 * 2.56,
-			coverRefractiveIndex: refractiveIndex,
+			coverRefractiveIndex: 1.5,
 			radius: lenticuleRadius,
 			height: lenticuleHeight,
 			coverHeight: coverHeight,

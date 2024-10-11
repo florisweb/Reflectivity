@@ -37,7 +37,7 @@ export class LenticuleComposite extends Composite {
 			new Material({
 				refractiveIndex: this.#refractiveIndex,
 				position: new Vector(this.#position.x + this.#radius, this.#position.y + this.#radius),
-				shape: new LenticuleShape({radius: this.#radius, height: this.#height, segments: 100})
+				shape: new LenticuleShape({radius: this.#radius, height: this.#height, segments: 1000})
 			}),
 			new Material({
 				color: '#f00',
@@ -85,7 +85,7 @@ export class LenticuleCompositeWithCover extends LenticuleComposite {
 			new Material({
 				refractiveIndex: this.#coverRefractiveIndex,
 				position: new Vector(this.#position.x + this.#radius, this.#position.y),
-				shape: new InverseLenticuleShape({radius: this.#radius, height: this.#radius + this.#coverHeight, segments: 100})
+				shape: new InverseLenticuleShape({radius: this.#radius, height: this.#radius + this.#coverHeight, segments: 1000})
 			})
 		]
 	}
